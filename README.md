@@ -14,7 +14,7 @@ docker run --name tdio-redis -p 6379:6379 -d redis
 
 ```
 python3.9 -m venv env
-source venv/bin/activated
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
