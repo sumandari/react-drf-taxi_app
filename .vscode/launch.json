@@ -5,6 +5,13 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Pytest: Run tests",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "justMyCode": false
+    },
+    {
       "name": "Python: Django",
       "type": "python",
       "request": "launch",
