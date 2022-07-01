@@ -1,8 +1,9 @@
+from lib2to3.pgen2 import driver
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from .models import Trip
+from .models import Trip, User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -47,3 +48,13 @@ class TripSerializer(serializers.ModelSerializer):
         model = Trip
         fields = '__all__'
         read_only_fields = ('id', 'created', 'updated')
+
+
+class NestedTripSerializer(serializers.ModelSerializer):
+    driver = UserSerializer()
+    rider = UserSerializer()
+
+    class Meta:
+        model = Trip
+        fields = '__all__'
+        depth = 1

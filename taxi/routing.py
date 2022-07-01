@@ -1,4 +1,3 @@
-from email.mime import application
 from django.core.asgi import get_asgi_application
 from django.urls import path
 
