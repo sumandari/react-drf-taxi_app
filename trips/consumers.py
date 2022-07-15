@@ -1,10 +1,7 @@
-from email import message
-from itertools import chain
-from tokenize import group
-from aioredis import Channel
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 
+from trips.models import Trip
 from trips.serializers import NestedTripSerializer, TripSerializer
 
 
@@ -22,8 +19,28 @@ class TaxiConsumer(AsyncJsonWebsocketConsumer):
         return NestedTripSerializer(trip).data
 
     @database_sync_to_async
+    def _get_trip_ids(self, user):
+        user_groups = user.groups.values_list('name', flat=True)
+        if 'driver' in user_groups:
+            trip_ids = user.trips_as_driver.exclude(
+                status=Trip.COMPLETED
+            ).only('id').values_list('id', flat=True)
+        else:
+            trip_ids = user.trips_as_rider.exclude(
+                status=Trip.COMPLETED
+            ).only('id').values_list('id', flat=True)
+        return map(str, trip_ids)
+
+    @database_sync_to_async
     def _get_user_group(self, user):
         return user.groups.first().name
+
+    @database_sync_to_async
+    def _update_trip(self, data):
+        instance = Trip.objects.get(id=data.get('id'))
+        serializer = TripSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        return serializer.update(instance, serializer.validated_data)
 
     async def connect(self):
         user = self.scope['user']
@@ -36,6 +53,13 @@ class TaxiConsumer(AsyncJsonWebsocketConsumer):
                     group='drivers',
                     channel=self.channel_name
                 )
+
+            for trip_id in await self._get_trip_ids(user):
+                await self.channel_layer.group_add(
+                    group=trip_id,
+                    channel=self.channel_name
+                )
+
             await self.accept()
 
     async def disconnect(self, code):
@@ -47,6 +71,11 @@ class TaxiConsumer(AsyncJsonWebsocketConsumer):
             if user_group == 'driver':
                 await self.channel_layer.group_discard(
                     group='drivers',
+                    channel=self.channel_name
+                )
+            for trip_id in await self._get_trip_ids(user):
+                await self.channel_layer.group_discard(
+                    group=trip_id,
                     channel=self.channel_name
                 )
         await super().disconnect(code)
@@ -85,3 +114,30 @@ class TaxiConsumer(AsyncJsonWebsocketConsumer):
             await self.create_trip(content)
         elif message_type == 'echo.message':
             await self.echo_message(content)
+        elif message_type == 'update.trip':
+            await self.update_trip(content)
+
+    async def update_trip(self, message):
+        data = message.get('data')
+        trip = await self._update_trip(data)
+        trip_id = f"{trip.id}"
+        trip_data = await self._get_trip_data(trip)
+
+        #  send update to rider
+        await self.channel_layer.group_send(
+            group=trip_id,
+            message={
+                'type': 'echo.message',
+                'data': trip_data
+            }
+        )
+
+        await self.channel_layer.group_add(
+            group=trip_id,
+            channel=self.channel_name
+        )
+
+        await self.send_json({
+            'type': 'echo.message',
+            'data': trip_data
+        })

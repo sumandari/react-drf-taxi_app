@@ -9,7 +9,12 @@
       "type": "python",
       "request": "launch",
       "module": "pytest",
-      "justMyCode": false
+      "justMyCode": false,
+      "env": {
+        "PGDATABASE": "taxi",
+        "PGUSER": "taxi",
+        "PGPASSWORD": "taxi"
+      }
     },
     {
       "name": "Python: Django",
