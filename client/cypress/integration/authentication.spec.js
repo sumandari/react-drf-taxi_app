@@ -1,13 +1,11 @@
+const faker = require('faker');
+
+const randomEmail = faker.internet.email();
+
 const logIn = () => { 
   const { username, password } = Cypress.env('credentials');
 
-  cy.intercept('POST', 'log_in', {
-      statusCode: 200,
-      body: {
-          'access': 'ACCESS_TOKEN',
-          'refresh': 'REFRESH_TOKEN'
-      }
-  }).as('logIn');
+  cy.intercept('POST', 'log_in').as('logIn');
   cy.visit('/#/log-in');
   cy.get('input#username').type(username);
   cy.get('input#password').type(password, { log: false });
@@ -25,21 +23,11 @@ describe('Authentication', function () {
     });
 
     it('Can sign up.', function () {
-        cy.intercept('POST', 'sign_up', {
-            statusCode: 201,
-            body: {
-                id: 1,
-                username: 'suman@example.com',
-                first_name: 'suman',
-                last_name: 'dari',
-                group: 'driver',
-                photo: '/media/images/photo.jpg'
-            }
-        }).as('signUp')
+        cy.intercept('POST', 'sign_up').as('signUp')
 
 
         cy.visit('/#/sign-up');
-        cy.get('input#username').type('suman@example.com');
+        cy.get('input#username').type(randomEmail);
         cy.get('input#firstName').type('suman');
         cy.get('input#lastName').type('dari');
         cy.get('input#password').type('password', { log: false });

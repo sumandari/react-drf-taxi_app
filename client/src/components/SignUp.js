@@ -8,7 +8,7 @@ import axios from 'axios';
 function SignUp(props) {
   const [isSubmitted, setSubmitted] = useState(false);
   const onSubmit = async (values, actions) => {
-    const url = 'api/sign_up';
+    const url = `${process.env.REACT_APP_BASE_URL}/api/sign_up/`;
     const formData = new FormData();
     formData.append('username', values.username);
     formData.append('first_name', values.first_name);
@@ -135,8 +135,8 @@ function SignUp(props) {
                     onChange={handleChange}
                     values={values.group}
                   >
-                    <option value='rider'></option>
-                    <option value='driver'></option>
+                    <option value='rider'>Rider</option>
+                    <option value='driver'>Driver</option>
                   </Form.Select>
                   {
                     'group' in errors && (
@@ -150,9 +150,11 @@ function SignUp(props) {
                   <Form.Control
                     className={'photo' in errors ? 'is-invalid' : ''}
                     name='photo'
-                    onChange={handleChange}
+                    onChange={event => {
+                      setFieldValue('photo', event.currentTarget.files[0])
+                    }}
                     type='file'
-                    values={values.photo}
+                    required
                   />
                   {
                     'photo' in errors && (

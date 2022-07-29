@@ -43,6 +43,9 @@ services:
     container_name: taxi-client
     depends_on:
       - taxi-server
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - REACT_APP_BASE_URL=http://localhost:8003
     ports:
       - 3001:3000
     stdin_open: true
