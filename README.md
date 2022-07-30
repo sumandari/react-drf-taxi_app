@@ -11,7 +11,8 @@ docker-compose up -d --build
 ## Run Cypress with docker run
 
 ```
-docker run -it -v $PWD:/e2e -w /e2e cypress/included:3.2.0
+cd ./client/
+docker run -it -v $PWD:/e2e -w /e2e --net=host cypress/included:9.2.
 ```
 
 ## Debugging with VSCode
