@@ -1,21 +1,17 @@
 ## Prequesitions
 
-- I'm using Docker containers :)
-- Run Docker containers for Postgres and Redis
+- docker-compose
+
+## Build and spin up the containers
 
 ```bash
-docker run --name tdio-postgres -p 54321:5432 -e POSTGRES_USER=taxi -e POSTGRES_DB=taxi -e POSTGRES_PASSWORD=taxi -d postgres
-docker run --name tdio-redis -p 6379:6379 -d redis
+docker-compose up -d --build
 ```
 
-- PS. next time, it will be docker-compose instead of docker-run
-
-## Create virtual env and install requirements
+## Run Cypress with docker run
 
 ```
-python3.9 -m venv env
-source venv/bin/activate
-pip install -r requirements.txt
+docker run -it -v $PWD:/e2e -w /e2e cypress/included:3.2.0
 ```
 
 ## Debugging with VSCode
