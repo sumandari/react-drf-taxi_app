@@ -1,44 +1,22 @@
 const faker = require('faker');
 
-const randomEmail = faker.internet.email();
+const email = faker.internet.email();
+const firstName = faker.name.firstName();
+const lastName = faker.name.lastName();
 
-const logIn = () => { 
-  const { username, password } = Cypress.env('credentials');
-
-  cy.intercept('POST', 'log_in').as('logIn');
-  cy.visit('/#/log-in');
-  cy.get('input#username').type(username);
-  cy.get('input#password').type(password, { log: false });
-  cy.get('button').contains('Log in').click();
-  cy.wait('@logIn');
-}
 
 describe('Authentication', function () {
-    it('Can log in.', function () {
-      logIn();
-
-      cy.hash().should('eq', '#/');
-      cy.get('button').contains('Log out');
-        
-    });
-
     it('Can sign up.', function () {
-        cy.intercept('POST', 'sign_up').as('signUp')
-
-
-        cy.visit('/#/sign-up');
-        cy.get('input#username').type(randomEmail);
-        cy.get('input#firstName').type('suman');
-        cy.get('input#lastName').type('dari');
-        cy.get('input#password').type('password', { log: false });
-        cy.get('select#group').select('driver');
-
-        cy.get('input#photo').attachFile('images/photo.jpg');
-        
-        cy.get('button').contains('Sign up').click();
-        cy.wait('@signUp');
-        cy.hash().should('eq', '#/log-in');
+        cy.addUser(email, firstName, lastName, 'rider');
     });
+
+    it('Can log in.', function () {
+        cy.logIn(email);
+  
+        cy.hash().should('eq', '#/');
+        cy.get('button').contains('Log out');
+          
+      });
 
     it('Show invalid fields on sign up error.', function () {
         cy.intercept('POST', 'sign_up', {
@@ -51,7 +29,7 @@ describe('Authentication', function () {
         }).as('signUp');
 
         cy.visit('/#/sign-up');
-        cy.get('input#username').type('suman@example.com');
+        cy.get('input#username').type(email);
         cy.get('input#firstName').type('suman');
         cy.get('input#lastName').type('dari');
         cy.get('input#password').type('password', { log: false });
@@ -68,9 +46,8 @@ describe('Authentication', function () {
     })
 
     it('Cannot visit the login page when logged in', function () {
-        const { username, password } = Cypress.env('credentials');
 
-        logIn();
+        cy.logIn(email);
 
         cy.visit('/#/log-in');
         cy.hash().should('eq', '#/');
@@ -79,7 +56,7 @@ describe('Authentication', function () {
     it('Cannot visit the sign up page when logged in.', function () {
         const { username, password } = Cypress.env('credentials');
 
-        logIn();
+        cy.logIn(email);
 
         cy.visit('/#/sign-up');
         cy.hash().should('eq', '#/');
@@ -91,7 +68,7 @@ describe('Authentication', function () {
         cy.visit('/');
         cy.get('a').contains('Log In').should('exist');
 
-        logIn();
+        cy.logIn(email);
 
         cy.get('a').contains('Log In').should('not.exist');
         cy.get('a').contains('Sign Up').should('not.exist');
@@ -109,8 +86,8 @@ describe('Authentication', function () {
             }
         }).as('logIn');
         cy.visit('/#/log-in');
-        cy.get('input#username').type(username);
-        cy.get('input#password').type(password, { log: false });
+        cy.get('input#username').type(email);
+        cy.get('input#password').type('password', { log: false });
         cy.get('button').contains('Log in').debug();
         cy.get('button').contains('Log in').click();
         cy.wait('@logIn');
@@ -123,7 +100,8 @@ describe('Authentication', function () {
     });
 
     it('Can log out', function () {
-        logIn();
+        cy.logIn(email);
+
         cy.get('button').contains('Log out').click().should(() => {
             expect(window.localStorage.getItem('taxi.auth')).to.be.null;
         });
