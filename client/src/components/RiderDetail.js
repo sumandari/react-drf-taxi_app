@@ -7,7 +7,7 @@ import TripMedia from './TripMedia';
 import { getTrip } from '../services/TripService';
 
 
-function DriverDetail() {
+function RiderDetail() {
   const [trip, setTrip] = useState(null)
   const params = useParams();
 
@@ -31,7 +31,7 @@ function DriverDetail() {
     tripMedia = (
       <TripMedia
         trip={trip}
-        otherGroup='rider'
+        otherGroup='driver'
       />
     )
   }
@@ -39,7 +39,7 @@ function DriverDetail() {
   return (
     <>
       <Breadcrumb>
-        <LinkContainer to='/driver'>
+        <LinkContainer to='/rider'>
           <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
         </LinkContainer>
         <Breadcrumb.Item active>Trip</Breadcrumb.Item>
@@ -52,4 +52,4 @@ function DriverDetail() {
   )
 }
 
-export default DriverDetail;
+export default RiderDetail;

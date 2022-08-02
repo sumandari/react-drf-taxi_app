@@ -78,7 +78,7 @@ describe('The driver dashboard', function () {
     cy.addUser(driverEmail, driverFirstName, driverLastName, 'driver');
   });
 
-  it.only('Cannot be visited if the user us not a driver', function () {
+  it('Cannot be visited if the user us not a driver', function () {
     cy.intercept('POST', 'sign_up').as('signUp');
     cy.intercept('POST', 'log_in').as('logIn');
     
