@@ -23,6 +23,7 @@ class TripView(viewsets.ReadOnlyModelViewSet):
     serializer_class = NestedTripSerializer
 
     def get_queryset(self):
+        # import pdb; pdb.set_trace()
         user = self.request.user
         if user.group == 'driver':
             return Trip.objects.filter(

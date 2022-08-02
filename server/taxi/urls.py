@@ -26,7 +26,7 @@ urlpatterns = [
     path('api/sign_up/', SignUpView.as_view(), name='sign_up'),
     path('api/log_in/', LogInView.as_view(), name='log_in'),
     path('api/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/trips/', include('trips.urls', 'trip',)),
+    path('api/trip/', include('trips.urls', 'trip',)),
 ]
 
 if settings.DEBUG:

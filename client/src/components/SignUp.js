@@ -85,7 +85,7 @@ function SignUp(props) {
                   <Form.Label>First name:</Form.Label>
                   <Form.Control
                     className={'firstName' in errors ? 'is-invalid' : ''}
-                    name='firstName'
+                    name='first_name'
                     onChange={handleChange}
                     values={values.firstName}
                   />
@@ -100,7 +100,7 @@ function SignUp(props) {
                   <Form.Label>Last name:</Form.Label>
                   <Form.Control
                     className={'lastName' in errors ? 'is-invalid' : ''}
-                    name='lastName'
+                    name='last_name'
                     onChange={handleChange}
                     values={values.lastName}
                   />

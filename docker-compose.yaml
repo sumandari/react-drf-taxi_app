@@ -20,6 +20,8 @@ services:
       - 8003:8000
     volumes:
       - ./server:/usr/src/app
+    stdin_open: true
+    tty: true
 
   taxi-redis:
     container_name: taxi-redis
