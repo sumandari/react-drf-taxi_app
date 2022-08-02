@@ -12,6 +12,9 @@ import SignUp from './components/SignUp';
 import Driver from './components/Driver';
 import Rider from './components/Rider';
 
+import DriverDashboard from './components/DriverDashboard';
+import DriverDetail from './components/DriverDetail';
+
 import './App.css';
 
 function App() {
@@ -50,7 +53,10 @@ function App() {
           element={<LogIn logIn={logIn} isLoggedIn={isLoggedIn} />}
         />
         <Route path='rider' element={<Rider />} />
-        <Route path='driver' element={<Driver />} />
+        <Route path='driver' element={<Driver />}>
+          <Route index element={<DriverDashboard />} />
+          <Route path=':id' element={<DriverDetail />} />
+        </Route>
       </Route>
       
     </Routes>
