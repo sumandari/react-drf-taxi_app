@@ -49,4 +49,13 @@ export const getTrips = async () => {
   } catch (response) {
     return { response, isError: true };
   }
-}
+};
+
+export const updateTrip = trip => {
+  connect();
+  const message = {
+    type: 'update.trip',
+    data: trip
+  };
+  _socket.next(message);
+};
