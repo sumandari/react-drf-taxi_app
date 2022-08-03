@@ -2,6 +2,7 @@ import React, { useState} from 'react';
 import { Button, Container, Form, Nav, Navbar } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Outlet, Route, Routes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 
 import axios from 'axios';
 
@@ -20,7 +21,7 @@ import RiderDashboard from './components/RiderDashboard';
 import RiderDetail from './components/RiderDetail';
 import RiderRequest from './components/RiderRequest';
 
-
+import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 
 function App() {
@@ -105,6 +106,8 @@ function Layout({ isLoggedIn, logOut }) {
       <Container className='pt-3'>
         <Outlet />
       </Container>
+
+      <ToastContainer />
       
     </>
   );

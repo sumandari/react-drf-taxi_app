@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Breadcrumb } from 'react-bootstrap';
+import {toast} from 'react-toastify'
 
 import TripCard from './TripCard';
 import { connect, getTrips, messages } from '../services/TripService';
@@ -8,6 +9,13 @@ import { connect, getTrips, messages } from '../services/TripService';
 function DriverDashboard(props) {
   const [trips, setTrips] = useState([]);
 
+  const updateToast = (trip) => {
+    const riderName = `${trip.rider.first_name} ${trip.rider.last_name}`;
+    if (trip.driver === null) {
+      toast.info(`${riderName} has requested a trip.`);
+    }
+  };
+
   useEffect(() => {
     connect();
     const subscription = messages.subscribe((message) => {
@@ -15,6 +23,7 @@ function DriverDashboard(props) {
         ...prevTrips.filter(trip => trip.id !== message.data.id),
         message.data
       ]);
+      updateToast(message.data);
     });
     return () => {
       if (subscription) { 
