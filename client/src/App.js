@@ -1,5 +1,5 @@
 import React, { useState} from 'react';
-import { Button, Container, Form, Navbar } from 'react-bootstrap';
+import { Button, Container, Form, Nav, Navbar } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Outlet, Route, Routes } from 'react-router-dom';
 
@@ -10,12 +10,16 @@ import LogIn from './components/LogIn';
 import SignUp from './components/SignUp';
 
 import Driver from './components/Driver';
+
 import Rider from './components/Rider';
+import { isRider } from './services/AuthService';
 
 import DriverDashboard from './components/DriverDashboard';
 import DriverDetail from './components/DriverDetail';
 import RiderDashboard from './components/RiderDashboard';
 import RiderDetail from './components/RiderDetail';
+import RiderRequest from './components/RiderRequest';
+
 
 import './App.css';
 
@@ -56,6 +60,7 @@ function App() {
         />
         <Route path='rider' element={<Rider />}>
           <Route index element={<RiderDashboard />} />
+          <Route path='request' element={<RiderRequest />} />
           <Route path=':id' element={<RiderDetail />} />
         </Route>
         <Route path='driver' element={<Driver />}>
@@ -78,6 +83,15 @@ function Layout({ isLoggedIn, logOut }) {
           </LinkContainer>
           <Navbar.Toggle />
           <Navbar.Collapse className='justify-content-end'>
+            {
+              isRider() && (
+                <Nav className='me-auto'>
+                  <LinkContainer to='/rider/request'>
+                    <Nav.Link data-cy='request-trip'>Request a trip</Nav.Link>
+                  </LinkContainer>
+                </Nav>
+              )
+            }
             {
               isLoggedIn && (
                 <Form>
